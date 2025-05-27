@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->softDeletes();
             $table->string('username');
-            $table->string('phone_number', 15)->nullable();
+            $table->string('phone_number', 15);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
