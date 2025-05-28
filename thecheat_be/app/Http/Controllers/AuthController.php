@@ -1,9 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
-
 use App\Services\AuthService;
 
 class AuthController extends Controller
@@ -14,7 +12,6 @@ class AuthController extends Controller
     {
         $this->authService = $authService;
     }
-
 
     public function emailRegistration(Request $request) 
     {
@@ -27,8 +24,6 @@ class AuthController extends Controller
         $message = $this->authService->emailLogin($request);
         return $message;
     }
-
-
 
     public function logout(Request $request) 
     {

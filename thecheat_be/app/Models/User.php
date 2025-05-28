@@ -51,5 +51,18 @@ class User extends Authenticatable
     }
 
 
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
 
+    public function profile()
+{
+    return $this->hasOne(UserProfile::class, 'user_id');
+}
+
+public function reportedPosts()
+{
+    return $this->hasMany(PostReport::class, 'reported_by_user_id');
+}
 }

@@ -73,8 +73,6 @@ class AuthService
           }
   
           $token = $user->createToken('access_token')->plainTextToken;
-  
-
 
           return response()->json([
               'message' => '로그인 성공',
