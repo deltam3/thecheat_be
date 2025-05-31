@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Jobs\AddNumbersJob;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Models\Post;
 use App\Models\Comment;
@@ -13,30 +14,55 @@ use App\Models\PostView;
 use App\Models\UserPoint;
 use DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
+
+use App\Jobs\UploadImagesJob;
 
 class PostService
 {
-  public function index($request)
+
+  public function index(Request $request)
   {
-      $posts = Post::with([
-        'images',
-        'comments' => function ($query) {
-            $query->whereNull('parent_comment_id')
-                  ->latest() 
-                  ->take(3);
-        }
-    ])
-    ->withCount('comments')
-    ->where('is_flagged', false)
-    ->orderBy('created_at', 'desc') 
-    ->paginate(20);
+    $page = $request->query('page', 1);
+
+    if ($page == 1) {
+        $cacheKey = 'posts_index_page_1'; 
+
+        $posts = Cache::remember($cacheKey, 30, function () {
+            return Post::with([
+                'images',
+                'comments' => function ($query) {
+                    $query->whereNull('parent_comment_id')
+                          ->latest()
+                          ->take(3);
+                }
+            ])
+            ->withCount('comments')
+            ->where('is_flagged', false)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+        });
+    } else {
+        $posts = Post::with([
+            'images',
+            'comments' => function ($query) {
+                $query->whereNull('parent_comment_id')
+                      ->latest()
+                      ->take(3);
+            }
+        ])
+        ->withCount('comments')
+        ->where('is_flagged', false)
+        ->orderBy('created_at', 'desc')
+        ->paginate(20);
+    }
 
     return response()->json([
         'status' => 'success',
         'posts' => $posts,
     ]);
   }
-
 
   public function getPostsByCommunityId($communityId, Request $request)
   {
@@ -87,85 +113,92 @@ class PostService
   ]);
   }
 
-  public function getPostDetails($postId, Request $request)
+  public function getPostDetails($postId)
   {
-    try {
-        $token = $request->bearerToken();
+  try {
+      $token = request()->bearerToken();
 
-        if (!$token) {
-            $post = Post::with('comments', 'postImages')->find($postId); 
-            $post->increment('view_count');
-            $comments = Comment::where('post_id', $postId)
-            ->whereNull('deleted_at') 
-            ->orderBy('created_at', 'desc')
-            ->with('commentImages')
-            ->get();
+      if (!$token) {
+          $post = Post::with('comments', 'postImages')->find($postId); 
+          $post->increment('view_count');
 
-            return response()->json([
-                'post' => $post,
-                'comments' => $comments,
-                'images' => $post->postImages, 
-            ], 200);
-        }
-        $personalAccessToken = PersonalAccessToken::findToken($token);
-        $user = $personalAccessToken ? $personalAccessToken->tokenable : null;
-        
-        if (!$user) {
-            return response()->json(['error' => 'Unauthorized', 'details' => 'User not found.'], 401);
-        }
-        $post = Post::with('comments', 'postImages')->find($postId); 
-        if (!$post) {
-            return response()->json(['message' => 'Post not found'], 404);
-        }
-        $existingView = PostView::where('user_id', $user->id)
-            ->where('post_id', $postId)
-            ->first();
-        $post->increment('view_count');
-        if (!$existingView) {
-            DB::beginTransaction();
-            try {
-                PostView::create([
-                    'user_id' => $user->id,
-                    'post_id' => $postId,
-                    'viewed_at' => now(),
-                ]);
-                UserPoint::create([
-                    'user_id' => $user->id,
-                    'points' => 1,
-                    'activity_type' => 'read',
-                    'activity_reference_id' => $postId,
-                    'created_at' => now(),
-                    'updated_at' => now(), 
-                ]);
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                return response()->json([
-                    'error' => '포인트, 조회수 에러',
-                    'details' => $e->getMessage(),
-                ], 500);
-            }
-        }
-        $comments = Comment::where('post_id', $postId)
-        ->whereNull('deleted_at') 
-        ->orderBy('created_at', 'desc')
-        ->with('commentImages')
-        ->get();
+          $comments = Comment::where('post_id', $postId)
+          ->whereNull('deleted_at') 
+          ->orderBy('created_at', 'desc')
+          ->with('commentImages')
+          ->get();
 
-        return response()->json([
-            'post' => $post,
-             'comments' => $comments,
-            'images' => $post->postImages, 
-        ], 200);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => '서버 에러',
-            'details' => $e->getMessage(),
-        ], 500);
-    }
+          return response()->json([
+              'post' => $post,
+              'comments' => $comments,
+              'images' => $post->postImages,
+          ], 200);
+      }
+
+      $personalAccessToken = PersonalAccessToken::findToken($token);
+      $user = $personalAccessToken ? $personalAccessToken->tokenable : null;
+
+      $post = Post::with('comments', 'postImages')->find($postId); 
+
+      if (!$post) {
+          return response()->json(['message' => 'Post not found'], 404);
+      }
+
+      $existingView = PostView::where('user_id', $user->id)
+          ->where('post_id', $postId)
+          ->first();
+
+      $post->increment('view_count');
+
+      if (!$existingView) {
+          DB::beginTransaction();
+
+          try {
+              PostView::create([
+                  'user_id' => $user->id,
+                  'post_id' => $postId,
+                  'viewed_at' => now(),
+              ]);
+
+              UserPoint::create([
+                  'user_id' => $user->id,
+                  'points' => 1,
+                  'activity_type' => 'read',
+                  'activity_reference_id' => $postId,
+                  'created_at' => now(),
+              ]);
+
+              DB::commit();
+
+          } catch (\Exception $e) {
+              DB::rollback();
+
+              return response()->json([
+                  'error' => 'Server error while adding view or points',
+                  'details' => $e->getMessage(),
+              ], 500);
+          }
+      }
+      $comments = Comment::where('post_id', $postId)
+      ->whereNull('deleted_at') 
+      ->orderBy('created_at', 'desc')
+      ->with('commentImages')
+      ->get();
+
+      return response()->json([
+          'post' => $post,
+           'comments' => $comments,
+          'images' => $post->postImages, 
+      ], 200);
+
+  } catch (\Exception $e) {
+      return response()->json([
+          'error' => 'Server error',
+          'details' => $e->getMessage(),
+      ], 500);
   }
-
+  }
   public function storePostByCommunityId($communityId, Request $request)
   {
     try {

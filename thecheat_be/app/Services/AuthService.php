@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
+use App\Models\UserProfile;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AuthService
 {
@@ -56,6 +58,51 @@ class AuthService
       ], 500);
   }
   }
+
+  public function emailRegistrationOptional(Request $request)
+  {
+      
+      $request->validate([
+          'intro_text' => 'nullable|string|max:100',
+          'profile_image' => 'nullable|image|max:5120', 
+      ]);
+
+      
+    
+      $user = auth()->user();  
+
+
+      
+      if (!$user) {
+          return response()->json(['error' => 'User not authenticated'], 401);
+      }
+
+      
+      $userProfile = UserProfile::firstOrCreate(['user_id' => $user->id]);
+
+      
+      if ($request->hasFile('profile_image')) {
+          $image = $request->file('profile_image');
+          $imageName = Str::random(10) . '.' . $image->getClientOriginalExtension();
+          $imagePath = $image->storeAs('profiles', $imageName, 'public');
+
+          
+          $userProfile->profile_image = $imagePath;
+      }
+
+      
+      $userProfile->intro_text = $request->input('intro_text', null);
+
+      
+      $userProfile->save();
+
+      
+      return response()->json([
+          'message' => 'Profile updated successfully',
+          'user_profile' => $userProfile,
+      ], 200);
+  }
+
   public function emailLogin(Request $request)
   {
       try {

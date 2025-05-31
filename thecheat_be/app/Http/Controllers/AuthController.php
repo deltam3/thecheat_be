@@ -19,6 +19,12 @@ class AuthController extends Controller
         return $message;
     }
 
+    public function emailRegistrationOptional(Request $request)
+    {
+        $message = $this->authService->emailRegistrationOptional($request);
+        return $message;
+    }
+
     public function emailLogin(Request $request) 
     {
         $message = $this->authService->emailLogin($request);

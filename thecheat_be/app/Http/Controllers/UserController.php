@@ -15,6 +15,18 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
+    public function getUserProfile(Request $request)
+    {
+        $message = $this->userService->getUserProfile($request);
+        return $message;
+    }
+
+    public function logoutUser(Request $request)
+    {
+        $message = $this->userService->logoutUser($request);
+        return $message;
+    }
+
     public function unregister(Request $request)
     {
         $user = auth()->user();  

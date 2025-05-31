@@ -8,12 +8,12 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
+Route::get('/', function (Request $request) {
+    return 'hello';
+});
 
 Route::post('/auth/emailRegistration', [AuthController::class, 'emailRegistration']);
-Route::post('/auth/emailLogin', [AuthController::class, 'emailLogin']);
+Route::post('/auth/emailLogin', [AuthController::class, 'emailLogin'])->name('login');
 
 
 Route::group([''], function () {
@@ -27,6 +27,7 @@ Route::group([''], function () {
 
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::delete('/user/unregister', [UserController::class, 'unregister']);
 
@@ -39,6 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/post/{postId}/comments', [CommentController::class, 'storedCommentByPost']);
         // 대댓글 추가
     Route::post('/comments/{commentId}', [CommentController::class, 'storedNestedComment']);
+
+    // 유저 모든 정보 불러오기 마이페이지 전용
+    Route::get('/user/profile', [UserController::class, 'getUserProfile']);
+    Route::post('/user/logout', [UserController::class, 'logoutUser']);
 });
-
-
