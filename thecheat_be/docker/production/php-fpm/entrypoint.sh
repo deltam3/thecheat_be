@@ -1,4 +1,3 @@
-
 set -e
 
 if [ ! "$(ls -A /var/www/storage)" ]; then
@@ -10,7 +9,6 @@ fi
 rm -rf /var/www/storage-init
 
 php artisan migrate --force
-
 
 php artisan config:cache
 php artisan route:cache

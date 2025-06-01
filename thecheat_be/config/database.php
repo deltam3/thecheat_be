@@ -45,7 +45,7 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => env('DB_HOST', 'mysql'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'root'),
@@ -61,7 +61,14 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-
+        'mysql_second' => [
+            'driver' => env('DB_CONNECTION_SECOND', 'mysql'),
+            'host' => env('DB_HOST_SECOND', 'mysql_second'),
+            'port' => env('DB_PORT_SECOND', '3306'),
+            'database' => env('DB_DATABASE_SECOND', 'second_database'),
+            'username' => env('DB_USERNAME_SECOND', 'laravel'),
+            'password' => env('DB_PASSWORD_SECOND', 'secret'),
+        ],
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
@@ -155,6 +162,7 @@ return [
         'default' => [
             'url' => env('REDIS_URL'),
             // 'host' => env('REDIS_HOST', '127.0.0.1'),
+            // 'host' => env('REDIS_HOST', 'redis'),
             'host' => env('REDIS_HOST', 'redis'),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
