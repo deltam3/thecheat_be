@@ -58,6 +58,7 @@ return [
             'strict' => true,
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::ATTR_PERSISTENT => true,
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
@@ -68,6 +69,9 @@ return [
             'database' => env('DB_DATABASE_SECOND', 'second_database'),
             'username' => env('DB_USERNAME_SECOND', 'laravel'),
             'password' => env('DB_PASSWORD_SECOND', 'secret'),
+            'options' => [
+                PDO::ATTR_PERSISTENT => true,
+            ]
         ],
         'mariadb' => [
             'driver' => 'mariadb',
