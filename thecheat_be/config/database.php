@@ -45,10 +45,10 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'mysql'),
+            'host' => env('DB_HOST', 'mysql-master'), 
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'app'),
-            'username' => env('DB_USERNAME', 'root'),
+            'username' => env('DB_USERNAME', 'laravel'),
             'password' => env('DB_PASSWORD', 'secret'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
@@ -61,20 +61,21 @@ return [
                 PDO::ATTR_PERSISTENT => true,
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
-            'write' => [
-                'host' => env('DB_HOST', 'mysql'), 
-                'username' => env('DB_USERNAME', 'root'),
-                'password' => env('DB_PASSWORD', 'secret'),
-                'database' => env('DB_DATABASE', 'app'),
-            ],
-            'read' => [
-                'host' => env('DB_HOST_SECOND', 'mysql-slave'), 
-                'username' => env('DB_USERNAME_SECOND', 'laravel'),
-                'password' => env('DB_PASSWORD_SECOND', 'secret'),
-                'database' => env('DB_DATABASE_SECOND', 'app_slave'), 
-            ],
-        ],
 
+
+            // 'write' => [
+            //     'host' => env('DB_HOST', 'mysql-master'), 
+            //     'username' => env('DB_USERNAME', 'laravel'),
+            //     'password' => env('DB_PASSWORD', 'secret'),
+            //     'database' => env('DB_DATABASE', 'app'),
+            // ],
+            // 'read' => [
+            //     'host' => env('DB_HOST_SECOND', 'mysql-slave'), 
+            //     'username' => env('DB_USERNAME_SECOND', 'laravel'),
+            //     'password' => env('DB_PASSWORD_SECOND', 'secret'),
+            //     'database' => env('DB_DATABASE_SECOND', 'app_slave'),
+            // ],
+        ],
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
