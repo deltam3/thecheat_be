@@ -26,7 +26,7 @@ services:
       - laravel-public-assets:/var/www/public/build
       - laravel-storage-production:/var/www/storage
     env_file:
-      - .env
+      - .env.prod
     networks:
       - laravel-production
     healthcheck:
@@ -38,6 +38,7 @@ services:
       mysql:
         condition: service_healthy
   mysql:
+    # container_name: mysql-master
     image: mysql:8
     restart: unless-stopped
     ports:
@@ -56,14 +57,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: --server-id=1 --log-bin=mysql-bin --binlog-format=row
 
   mysql_second:
+    # container_name: mysql-slave
     image: mysql:8
     restart: unless-stopped
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_DATABASE=second_database
+      - MYSQL_DATABASE=mysql_second
       - MYSQL_USER=laravel
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_PASSWORD=secret
@@ -76,6 +79,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: --server-id=2 --log-bin=mysql-bin --binlog-format=row
+    depends_on:
+      - mysql
 
   redis:
     image: redis:alpine
