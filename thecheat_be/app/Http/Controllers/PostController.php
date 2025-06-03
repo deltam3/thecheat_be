@@ -5,15 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Services\PostService;
-
+use App\Services\S3Service;
 
 class PostController extends Controller
 {
     protected $postService;
+    protected $S3Service;
 
-    public function __construct(PostService $postService)
+    public function __construct(PostService $postService, S3Service $S3Service)
     {
         $this->postService = $postService;
+        $this->S3Service = $S3Service;
     }
 
     public function index(Request $request) 

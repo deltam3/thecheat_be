@@ -1,5 +1,6 @@
 <?php
 namespace App\Services;
+use Illuminate\Support\Facades\Storage;
 
 use App\Jobs\AddNumbersJob;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,10 +19,16 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 
 use App\Jobs\UploadImagesJob;
-
+use App\Services\S3Service;
 class PostService
 {
+   protected $s3Service;
 
+
+   public function __construct(S3Service $s3Service)
+  {
+    $this->s3Service = $s3Service;
+  }
   public function index(Request $request)
   {
     $page = $request->query('page', 1);
@@ -115,89 +122,89 @@ class PostService
 
   public function getPostDetails($postId)
   {
-  try {
-      $token = request()->bearerToken();
+    try {
+        $token = request()->bearerToken();
 
-      if (!$token) {
-          $post = Post::with('comments', 'postImages')->find($postId); 
-          $post->increment('view_count');
+        if (!$token) {
+            $post = Post::with('comments', 'postImages')->find($postId); 
+            $post->increment('view_count');
 
-          $comments = Comment::where('post_id', $postId)
-          ->whereNull('deleted_at') 
-          ->orderBy('created_at', 'desc')
-          ->with('commentImages')
-          ->get();
+            $comments = Comment::where('post_id', $postId)
+            ->whereNull('deleted_at') 
+            ->orderBy('created_at', 'desc')
+            ->with('commentImages')
+            ->get();
 
 
-          return response()->json([
-              'post' => $post,
-              'comments' => $comments,
-              'images' => $post->postImages,
-          ], 200);
-      }
+            return response()->json([
+                'post' => $post,
+                'comments' => $comments,
+                'images' => $post->postImages,
+            ], 200);
+        }
 
-      $personalAccessToken = PersonalAccessToken::findToken($token);
-      $user = $personalAccessToken ? $personalAccessToken->tokenable : null;
+        $personalAccessToken = PersonalAccessToken::findToken($token);
+        $user = $personalAccessToken ? $personalAccessToken->tokenable : null;
 
-      $post = Post::with('comments', 'postImages')->find($postId); 
+        $post = Post::with('comments', 'postImages')->find($postId); 
 
-      if (!$post) {
-          return response()->json(['message' => 'Post not found'], 404);
-      }
+        if (!$post) {
+            return response()->json(['message' => 'Post not found'], 404);
+        }
 
-      $existingView = PostView::where('user_id', $user->id)
-          ->where('post_id', $postId)
-          ->first();
+        $existingView = PostView::where('user_id', $user->id)
+            ->where('post_id', $postId)
+            ->first();
 
-      $post->increment('view_count');
+        $post->increment('view_count');
 
-      if (!$existingView) {
-          DB::beginTransaction();
+        if (!$existingView) {
+            DB::beginTransaction();
 
-          try {
-              PostView::create([
-                  'user_id' => $user->id,
-                  'post_id' => $postId,
-                  'viewed_at' => now(),
-              ]);
+            try {
+                PostView::create([
+                    'user_id' => $user->id,
+                    'post_id' => $postId,
+                    'viewed_at' => now(),
+                ]);
 
-              UserPoint::create([
-                  'user_id' => $user->id,
-                  'points' => 1,
-                  'activity_type' => 'read',
-                  'activity_reference_id' => $postId,
-                  'created_at' => now(),
-              ]);
+                UserPoint::create([
+                    'user_id' => $user->id,
+                    'points' => 1,
+                    'activity_type' => 'read',
+                    'activity_reference_id' => $postId,
+                    'created_at' => now(),
+                ]);
 
-              DB::commit();
+                DB::commit();
 
-          } catch (\Exception $e) {
-              DB::rollback();
+            } catch (\Exception $e) {
+                DB::rollback();
 
-              return response()->json([
-                  'error' => 'Server error while adding view or points',
-                  'details' => $e->getMessage(),
-              ], 500);
-          }
-      }
-      $comments = Comment::where('post_id', $postId)
-      ->whereNull('deleted_at') 
-      ->orderBy('created_at', 'desc')
-      ->with('commentImages')
-      ->get();
+                return response()->json([
+                    'error' => 'Server error while adding view or points',
+                    'details' => $e->getMessage(),
+                ], 500);
+            }
+        }
+        $comments = Comment::where('post_id', $postId)
+        ->whereNull('deleted_at') 
+        ->orderBy('created_at', 'desc')
+        ->with('commentImages')
+        ->get();
 
-      return response()->json([
-          'post' => $post,
-           'comments' => $comments,
-          'images' => $post->postImages, 
-      ], 200);
+        return response()->json([
+            'post' => $post,
+            'comments' => $comments,
+            'images' => $post->postImages, 
+        ], 200);
 
-  } catch (\Exception $e) {
-      return response()->json([
-          'error' => 'Server error',
-          'details' => $e->getMessage(),
-      ], 500);
-  }
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => 'Server error',
+            'details' => $e->getMessage(),
+        ], 500);
+    }
   }
   public function storePostByCommunityId($communityId, Request $request)
   {
@@ -237,16 +244,23 @@ class PostService
               $imageOrder = 0;
 
               foreach ($images as $image) {
-                  $imagePath = $image->store('post_images', 'public'); 
-                  $imageUrl = asset('storage/' . $imagePath);  
+                //   $imagePath = $image->store('post_images', 'public'); 
+                //   $imageUrl = asset('storage/' . $imagePath);  
 
+         $imagePath = $image->store('post_images', 's3');  
+         $imageUrl = Storage::disk('s3')->url($imagePath);
 
                   PostImage::create([
                       'post_id' => $post->id,
                       'image_url' => $imageUrl,
                       'image_order' => $imageOrder++,
                   ]);
-
+                  $filename = $image->getClientOriginalName();
+                  $contents = file_get_contents($image->getRealPath());
+                  $this->s3Service->storeFile($filename, $contents);
+                  
+                //   return redirect()->back()->with('status', 'File uploaded successfully to S3!');
+      
                   if ($imageOrder === 1) {
                       $thumbnailImageUrl = $imageUrl;
                   }
