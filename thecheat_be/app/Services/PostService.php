@@ -124,7 +124,6 @@ class PostService
   {
     try {
         $token = request()->bearerToken();
-
         if (!$token) {
             $post = Post::with('comments', 'postImages')->find($postId); 
             $post->increment('view_count');
@@ -134,12 +133,14 @@ class PostService
             ->orderBy('created_at', 'desc')
             ->with('commentImages')
             ->get();
+            $userProfile = $post->user ? $post->user->profile : null;
 
-
+            // $userProfile = $post->user ? $post->user->profile : null;
             return response()->json([
                 'post' => $post,
                 'comments' => $comments,
                 'images' => $post->postImages,
+                // 'userProfile' => $userProfile,  
             ], 200);
         }
             $post = Post::with('comments', 'postImages')->find($postId); 
@@ -151,11 +152,13 @@ class PostService
             ->with('commentImages')
             ->get();
 
+            $userProfile = $post->user ? $post->user->profile : null;
 
             return response()->json([
                 'post' => $post,
                 'comments' => $comments,
                 'images' => $post->postImages,
+                // 'userProfile' => $userProfile,  
             ], 200);
         $personalAccessToken = PersonalAccessToken::findToken($token);
         $user = $personalAccessToken ? $personalAccessToken->tokenable : null;
@@ -328,16 +331,25 @@ class PostService
 
   public function searchCommunity($communityId, $searchString)
   { 
+    $searchString = urldecode($searchString);
+
     if ($communityId === 'all') { 
       $posts = Post::where('title', 'like', '%' . $searchString . '%')
         ->orWhere('content', 'like', '%' . $searchString . '%')
         ->get();
+    
+        return response()->json([
+            'posts' => $posts,
+        ], 200);
       } else {  
         $posts = Post::where('community_id', $communityId)
           ->where(function($query) use ($searchString) {
             $query->where('title', 'like', '%' . $searchString . '%')
           ->orWhere('content', 'like', '%' . $searchString . '%');
         })->get();
+        return response()->json([
+            'posts' => $posts,
+        ], 200);
       }
       return response()->json([
           'posts' => $posts,

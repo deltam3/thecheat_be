@@ -21,7 +21,7 @@ Route::group([''], function () {
     // 게시판마다 글들 가져오기
     Route::get('/posts/{communityId}', [PostController::class, 'getPostsByCommunityId']);
     Route::get('/posts/details/{postId}', [PostController::class, 'getPostDetails'] );
-    Route::post('/posts/{communityId}/{searchString}', [PostController::class, 'searchCommunity']);
+    Route::get('/posts/{communityId}/{searchString}', [PostController::class, 'searchCommunity']);
 });
 
 
