@@ -258,19 +258,13 @@ class PostService
               $imageOrder = 0;
 
               foreach ($images as $image) {
-<<<<<<< HEAD
+
                   $imagePath = $image->store('post_images', 'public'); 
                   $imageUrl = asset('storage/' . $imagePath);  
-
-        //  $imagePath = $image->store('post_images', 's3');  
-        //  $imageUrl = Storage::disk('s3')->url($imagePath);
-=======
-                   $imagePath = $image->store('post_images', 'public'); 
-                   $imageUrl = asset('storage/' . $imagePath);  
-
+                  
 //        $imagePath = $image->store('post_images', 's3');  
 //        $imageUrl = Storage::disk('s3')->url($imagePath);
->>>>>>> 3db80f846675b0e82e5ae4e7874adf5fbe92485c
+
 
                   PostImage::create([
                       'post_id' => $post->id,
