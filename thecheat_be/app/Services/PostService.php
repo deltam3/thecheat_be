@@ -240,12 +240,13 @@ class PostService
               'victim_site_url' => 'nullable|url|max:255', 
           ]);
 
-
+          $profileImage = $user->profile ? $user->profile->profile_image : null;
           $post = Post::create([
               'user_id' => $user->id,
               'community_id' => $communityId, 
               'title' => $validated['title'],
               'content' => $validated['content'],
+              'profile_image' => $profileImage,
               'police_station_name' => $request->input('police_station_name', null), 
               'victim_site_url' => $request->input('victim_site_url', null),
           ]);
@@ -261,7 +262,7 @@ class PostService
 
                   $imagePath = $image->store('post_images', 'public'); 
                   $imageUrl = asset('storage/' . $imagePath);  
-                  
+
 //        $imagePath = $image->store('post_images', 's3');  
 //        $imageUrl = Storage::disk('s3')->url($imagePath);
 
