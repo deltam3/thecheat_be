@@ -45,7 +45,8 @@ class AuthService
           'message' => '회원가입 성공',
           'token' => $token,
       ], 201)
-      ->cookie('isAuthenticated', 'true', 5256000, '.thecheat.vercel.app', true, false, false, 'None');
+    //   ->cookie('isAuthenticated', 'true', 5256000, '*', true, false, false, 'None');
+      ->cookie('isAuthenticated', 'true', 5256000, '/', '.thecheat.vercel.app', true, false, false, 'None');
     //   ->cookie( 'access_token', $token, $fiveYears, null, null, true, true, false, 'Lax');
 
   } catch (\Illuminate\Validation\ValidationException $e) {
