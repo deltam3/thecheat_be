@@ -23,7 +23,7 @@ return [
 
     // 'allowed_origins_patterns' => [],
 
-    'allowed_origins' => [env('FRONTEND_URL'),'https://thecheat.vercel.app', 'http://coolmakeapple.com', 'http://www.coolmakeapple.com', 'http://localhost:3000/'],
+    'allowed_origins' => ['https://thecheat.vercel.app', env('FRONTEND_URL'), 'http://coolmakeapple.com', 'http://www.coolmakeapple.com', 'http://localhost:3000/'],
 
     'allowed_headers' => ['*'],
 
