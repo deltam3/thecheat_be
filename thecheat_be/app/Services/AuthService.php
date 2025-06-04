@@ -131,7 +131,7 @@ class AuthService
               'token' => $token,
             //   'user' => $user,
           ], 200)
-          ->cookie('isAuthenticated', 'true', 5256000, '/', '.thecheat.vercel.app', true, false, false, 'None');
+          ->cookie('isAuthenticated', 'true', 5256000, '/', 'https://thecheat.vercel.app', true, false, false, 'None');
         //   ->cookie('access_token', $token, $minutes, '/', '.example.com', true, true, false, 'None');
 
   
