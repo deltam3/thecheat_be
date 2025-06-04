@@ -88,8 +88,8 @@ class AuthService
       if ($request->hasFile('profile_image')) {
           $image = $request->file('profile_image');
         //   $imageName = Str::random(10) . '.' . $image->getClientOriginalExtension();
-        
-          $imagePath = $image->storeAs('profiles', $user->id, 'public');
+          $imageName = $user->id . '.' . $image->getClientOriginalExtension();
+          $imagePath = $image->storeAs('profiles', $imageName, 'public');
 
           
           $userProfile->profile_image = $imagePath;
