@@ -44,7 +44,7 @@ class AuthService
       return response()->json([
           'message' => '회원가입 성공',
           'token' => $token,
-      ], 201)->cookie('isAuthenticated', 'true', 5256000, null, null, false, false)->cookie( 'access_token', $token, $fiveYears, null, null, true, true, false, 'Lax');
+      ], 201)->cookie('isAuthenticated', 'true', 5256000, '/', config('cookie.domain', '.thecheat.vercel.app'), config('cookie.secure', false), false, false, config('cookie.samesite', 'None'))->cookie( 'access_token', $token, $fiveYears, null, null, true, true, false, 'Lax');
   } catch (\Illuminate\Validation\ValidationException $e) {
       return response()->json([
           'message' => 'Validation 실패',
@@ -96,7 +96,8 @@ class AuthService
       
       $userProfile->save();
 
-      
+      $token = $user->createToken('access_token')->plainTextToken;
+      $fiveYears = 60 * 24 * 365 * 5;
       return response()->json([
           'message' => 'Profile updated successfully',
           'user_profile' => $userProfile,
@@ -125,7 +126,8 @@ class AuthService
               'message' => '로그인 성공',
               'token' => $token,
             //   'user' => $user,
-          ], 200)->cookie('isAuthenticated', 'true', 5256000, null, null, false, false)->cookie( 'access_token', $token, 60 * 24 * 365 * 5, null, null, true, true, false, 'Lax');;
+          ], 200)->cookie('isAuthenticated', 'true', 5256000, '/', config('cookie.domain', '.thecheat.vercel.app'), config('cookie.secure', false), false, false, config('cookie.samesite', 'None'));
+        //   ->cookie('access_token', $token, $minutes, '/', '.example.com', true, true, false, 'None');
   
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json([
