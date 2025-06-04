@@ -44,7 +44,17 @@ class AuthService
       return response()->json([
           'message' => '회원가입 성공',
           'token' => $token,
-      ], 201)->cookie('isAuthenticated', 'true', 5256000, null, null, false, false)->cookie( 'access_token', $token, $fiveYears, null, null, true, true, false, 'Lax');
+      ], 201)-->cookie(
+    'isAuthenticated',
+    $token,
+    $fiveYears,
+    '/',               h
+    'thecheat.vercel.app',  
+    true,                true,             
+    false,             
+    'None'           
+)
+->cookie( 'access_token', $token, $fiveYears, null, null, true, true, false, 'None');
   } catch (\Illuminate\Validation\ValidationException $e) {
       return response()->json([
           'message' => 'Validation 실패',
@@ -125,7 +135,8 @@ class AuthService
               'message' => '로그인 성공',
               'token' => $token,
             //   'user' => $user,
-          ], 200)->cookie('isAuthenticated', 'true', 5256000, null, null, false, false)->cookie( 'access_token', $token, 60 * 24 * 365 * 5, null, null, true, true, false, 'Lax');;
+          ], 200)->cookie('isAuthenticated', 'true', 5256000, '/', 'game.vercel.app', true, false, false, 'None')
+->cookie( 'access_token', $token, 60 * 24 * 365 * 5, null, null, true, true, false, 'Lax');;
   
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json([

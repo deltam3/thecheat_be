@@ -142,7 +142,21 @@ class PostService
                 'images' => $post->postImages,
             ], 200);
         }
+            $post = Post::with('comments', 'postImages')->find($postId); 
+            $post->increment('view_count');
 
+            $comments = Comment::where('post_id', $postId)
+            ->whereNull('deleted_at') 
+            ->orderBy('created_at', 'desc')
+            ->with('commentImages')
+            ->get();
+
+
+            return response()->json([
+                'post' => $post,
+                'comments' => $comments,
+                'images' => $post->postImages,
+            ], 200);
         $personalAccessToken = PersonalAccessToken::findToken($token);
         $user = $personalAccessToken ? $personalAccessToken->tokenable : null;
 
@@ -244,20 +258,20 @@ class PostService
               $imageOrder = 0;
 
               foreach ($images as $image) {
-                //   $imagePath = $image->store('post_images', 'public'); 
-                //   $imageUrl = asset('storage/' . $imagePath);  
+                   $imagePath = $image->store('post_images', 'public'); 
+                   $imageUrl = asset('storage/' . $imagePath);  
 
-         $imagePath = $image->store('post_images', 's3');  
-         $imageUrl = Storage::disk('s3')->url($imagePath);
+//        $imagePath = $image->store('post_images', 's3');  
+//        $imageUrl = Storage::disk('s3')->url($imagePath);
 
                   PostImage::create([
                       'post_id' => $post->id,
                       'image_url' => $imageUrl,
                       'image_order' => $imageOrder++,
                   ]);
-                  $filename = $image->getClientOriginalName();
-                  $contents = file_get_contents($image->getRealPath());
-                  $this->s3Service->storeFile($filename, $contents);
+//                 $filename = $image->getClientOriginalName();
+//                  $contents = file_get_contents($image->getRealPath());
+//                  $this->s3Service->storeFile($filename, $contents);
                   
                 //   return redirect()->back()->with('status', 'File uploaded successfully to S3!');
       
