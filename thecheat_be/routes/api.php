@@ -8,7 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 
 Route::get('/', function (Request $request) {
-    return 'goodbye';
+    return '혼자서';
 });
 
 Route::post('/auth/emailRegistration', [AuthController::class, 'emailRegistration']);
