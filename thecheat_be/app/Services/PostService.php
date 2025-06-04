@@ -135,11 +135,11 @@ class PostService
             ->get();
             $userProfile = $post->user ? $post->user->profile : null;
 
-            // $userProfile = $post->user ? $post->user->profile : null;
+            $userProfile = $post->user ? $post->user->profile : null;
             return response()->json([
                 'post' => $post,
                 'comments' => $comments,
-                'images' => $post->postImages,
+                // 'images' => $post->postImages,
                 // 'userProfile' => $userProfile,  
             ], 200);
         }
@@ -157,7 +157,7 @@ class PostService
             return response()->json([
                 'post' => $post,
                 'comments' => $comments,
-                'images' => $post->postImages,
+                // 'images' => $post->postImages,
                 // 'userProfile' => $userProfile,  
             ], 200);
         $personalAccessToken = PersonalAccessToken::findToken($token);
@@ -213,7 +213,7 @@ class PostService
         return response()->json([
             'post' => $post,
             'comments' => $comments,
-            'images' => $post->postImages, 
+            // 'images' => $post->postImages, 
         ], 200);
 
     } catch (\Exception $e) {
