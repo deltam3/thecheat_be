@@ -130,7 +130,8 @@ class AuthService
               'message' => '로그인 성공',
               'token' => $token,
             //   'user' => $user,
-          ], 200)->cookie('isAuthenticated', 'true', 5256000, '/', config('cookie.domain', '.thecheat.vercel.app'), config('cookie.secure', false), false, false, config('cookie.samesite', 'None'));
+          ], 200);
+        //   ->cookie('isAuthenticated', 'true', 5256000, '/', config('cookie.domain', '.thecheat.vercel.app'), config('cookie.secure', false), false, false, config('cookie.samesite', 'None'));
         //   ->cookie('access_token', $token, $minutes, '/', '.example.com', true, true, false, 'None');
 
   
