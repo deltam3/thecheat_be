@@ -86,16 +86,16 @@ public function emailRegistrationOptional(Request $request)
         $userProfile = UserProfile::firstOrCreate(['user_id' => $user->id]);
 
         if ($request->hasFile('profile_image')) {
-            // $upload = $request->file('profile_image');
-            // $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
-            // Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
-            // $userProfile->profile_image = "profiles/{$imageName}";
-
-            $uploadedImage = $request->file('profile_image');
-            $image = Image::read($uploadedImage)->resize(300, 200);
-            $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
-            Storage::disk('public')->putFileAs('profiles', $image, $imageName);
+            $upload = $request->file('profile_image');
+            $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
             $userProfile->profile_image = "profiles/{$imageName}";
+
+            // $uploadedImage = $request->file('profile_image');
+            // $image = Image::read($uploadedImage)->resize(300, 200);
+            // $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
+            // Storage::disk('public')->putFileAs('profiles', $image, $imageName);
+            // $userProfile->profile_image = "profiles/{$imageName}";
 
         }
 
