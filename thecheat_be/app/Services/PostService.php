@@ -34,10 +34,10 @@ class PostService
     $page = $request->query('page', 1);
 
     if ($page == 1) {
-        $cacheKey = 'posts_index_page_1'; 
-
-        $posts = Cache::remember($cacheKey, 30, function () {
-            return Post::with([
+        $cacheKey = 'posts_index_page_1';
+    
+        $data = Cache::remember($cacheKey, 30, function () {
+            $posts = Post::with([
                 'images',
                 'comments' => function ($query) {
                     $query->whereNull('parent_comment_id')
@@ -49,7 +49,20 @@ class PostService
             ->where('is_flagged', false)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+    
+            $randomNumber = random_int(1, 100);
+    
+            return [
+                'posts' => $posts,
+                'random' => $randomNumber,
+            ];
         });
+    
+        return response()->json([
+            'random' => $data['random'],
+            'status' => 'success',
+            'posts' => $data['posts'],
+        ]);
     } else {
         $posts = Post::with([
             'images',
@@ -135,7 +148,7 @@ class PostService
             ->get();
             $userProfile = $post->user ? $post->user->profile : null;
 
-            $userProfile = $post->user ? $post->user->profile : null;
+
             return response()->json([
                 'post' => $post,
                 'comments' => $comments,

@@ -21,7 +21,7 @@ class SyncCacheToDatabase extends Command
      *
      * @var string
      */
-    protected $description = 'Sync Redis cache data (view counts and user points) to MySQL.';
+    protected $description = '레디스 케시를 (view counts and user points) MySQL과 연동.';
 
     /**
      * Execute the console command.

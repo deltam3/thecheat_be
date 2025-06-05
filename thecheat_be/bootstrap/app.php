@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
     })
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('sync:cache-to-database')->everyMinute();
+        $schedule->command('apps:sync-cache-to-database')->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
