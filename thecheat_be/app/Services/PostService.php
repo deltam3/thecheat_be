@@ -50,16 +50,12 @@ class PostService
             ->orderBy('created_at', 'desc')
             ->paginate(20);
     
-            $randomNumber = random_int(1, 100);
-    
             return [
                 'posts' => $posts,
-                'random' => $randomNumber,
             ];
         });
     
         return response()->json([
-            'random' => $data['random'],
             'status' => 'success',
             'posts' => $data['posts'],
         ]);
