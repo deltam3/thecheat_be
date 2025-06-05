@@ -44,3 +44,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/profile', [UserController::class, 'getUserProfile']);
     Route::post('/user/logout', [UserController::class, 'logoutUser']);
 });
+
+
+
+use App\Jobs\DummyJob;
+Route::post('/dispatch-dummy-job', function (Request $request) {
+    $message = $request->input('message', '큐작동테스트성공!');
+        
+    DummyJob::dispatch($message);
+
+    return response()->json(['status' => '잡 디스패치 성공']);
+});
