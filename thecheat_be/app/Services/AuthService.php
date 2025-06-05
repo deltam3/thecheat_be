@@ -101,8 +101,6 @@ class AuthService
       
       $userProfile->save();
 
-      $token = $user->createToken('access_token')->plainTextToken;
-      $fiveYears = 60 * 24 * 365 * 5;
       return response()->json([
           'message' => 'Profile updated successfully',
           'user_profile' => $userProfile,
