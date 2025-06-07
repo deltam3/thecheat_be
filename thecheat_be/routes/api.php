@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ScamReportsController;
+
 
 Route::get('/', function (Request $request) {
     return '혼자서';
@@ -22,8 +24,10 @@ Route::group([''], function () {
     Route::get('/posts/{communityId}', [PostController::class, 'getPostsByCommunityId']);
     Route::get('/posts/details/{postId}', [PostController::class, 'getPostDetails'] );
     Route::get('/posts/{communityId}/{searchString}', [PostController::class, 'searchCommunity']);
-});
 
+    //피해사례 등록
+});
+Route::post('/scamreports', [ScamReportsController::class, 'postScamReport']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
@@ -43,8 +47,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // 유저 모든 정보 불러오기 마이페이지 전용
     Route::get('/user/profile', [UserController::class, 'getUserProfile']);
     Route::post('/user/logout', [UserController::class, 'logoutUser']);
+
+
 });
 
+    // 피해 사례 검색
+Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
 
 
 use App\Jobs\DummyJob;

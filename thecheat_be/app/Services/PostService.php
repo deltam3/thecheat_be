@@ -37,6 +37,7 @@ class PostService
         $cacheKey = 'posts_index_page_1';
     
         $data = Cache::remember($cacheKey, 30, function () {
+            $randomNumber = rand();
             $posts = Post::with([
                 'images',
                 'comments' => function ($query) {
@@ -52,6 +53,7 @@ class PostService
     
             return [
                 'posts' => $posts,
+
             ];
         });
     
