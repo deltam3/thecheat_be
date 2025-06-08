@@ -40,7 +40,6 @@ class ResizeProfileImage implements ShouldQueue
      */
     public function handle()
     {
-<<<<<<< HEAD
         $image = Storage::disk('public')->get($this->imagePath);
 
         $image = Image::read($image)->resize(180, 180);
@@ -53,22 +52,3 @@ class ResizeProfileImage implements ShouldQueue
         $this->userProfile->save();
     }
 }
-=======
-        // Get the image path from storage
-        $image = Storage::disk('public')->get($this->imagePath);
-
-        // Resize the image to 180x180
-        $image = Image::read($image)->resize(180, 180);
-
-        // Create a new name for the resized image
-        $resizedImageName = basename($this->imagePath, '.' . pathinfo($this->imagePath, PATHINFO_EXTENSION)) . '-resized.jpg';
-
-        // Store the resized image
-        Storage::disk('public')->put('profiles/resized/' . $resizedImageName, (string) $image->encode());
-
-        // Update the user profile with the resized image path
-        $this->userProfile->profile_image = 'profiles/resized/' . $resizedImageName;
-        $this->userProfile->save();
-    }
-}
->>>>>>> 5deadd4503633a42b1eafb7374ce404eb94cdc83

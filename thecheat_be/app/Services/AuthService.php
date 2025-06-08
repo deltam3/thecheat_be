@@ -43,13 +43,13 @@ class AuthService
       ]);
 
       $token = $user->createToken('access_token')->plainTextToken;
-      $fiveYears = 60 * 24 * 365 * 5;
+      $fiveYears = 60 * 60 * 24 * 365 * 5;
 
       $encodedToken = urlencode($token); // URL encode the token
       return response()->json([
           'message' => '회원가입 성공',
           'token' => $token,
-      ], 201)
+      ], 200)
     //   ->cookie('isAuthenticated', 'true', 5256000, '*', true, false, false, 'None');
       ->cookie('isAuthenticated', 'true', 5256000, '/', '.thecheat.vercel.app', true, false, false, 'None')
       ->cookie('access_token', $encodedToken, $fiveYears, null, null, true, true, false, 'Lax');
