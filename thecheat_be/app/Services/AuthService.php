@@ -13,8 +13,8 @@ use App\Models\UserProfile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-
 use Intervention\Image\Laravel\Facades\Image;
+use App\Jobs\ResizeProfileImage;
 
 
 class AuthService
@@ -85,20 +85,55 @@ public function emailRegistrationOptional(Request $request)
 
         $userProfile = UserProfile::firstOrCreate(['user_id' => $user->id]);
 
-        if ($request->hasFile('profile_image')) {
+//        if ($request->hasFile('profile_image')) {
+ //           $upload = $request->file('profile_image');
+ //           $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
+ //           Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
+ //           $userProfile->profile_image = "profiles/{$imageName}";
+
+//             $uploadedImage = $request->file('profile_image');
+//             $image = Image::read($uploadedImage)->resize(300, 200);
+//             $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
+//             Storage::disk('public')->putFileAs('profiles', $image, $imageName);
+//             $userProfile->profile_image = "profiles/{$imageName}";
+
+//        }
+if ($request->hasFile('profile_image')) {
+//    $uploadedImage = $request->file('profile_image');
+//    $image = Image::read($uploadedImage)->resize(180, 200);
+//    $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
+//    $imageContent = $image->encode(); 
+//    Storage::disk('public')->put('profiles/' . $imageName, $imageContent);
+//    $userProfile->profile_image = "profiles/{$imageName}";
             $upload = $request->file('profile_image');
             $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
+            $imagePath = 'profiles/' . $imageName;
+
+            // Store the uploaded profile image
             Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
-            $userProfile->profile_image = "profiles/{$imageName}";
+            if ($request->hasFile('profile_image')) {
+    $uploadedImage = $request->file('profile_image');
+    $image = Image::read($uploadedImage)->resize(180, 200);
+    $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
+    $imageContent = $image->encode();
+    Storage::disk('public')->put('profiles/' . $imageName, $imageContent);
+    $userProfile->profile_image = "profiles/{$imageName}";
 
-            // $uploadedImage = $request->file('profile_image');
-            // $image = Image::read($uploadedImage)->resize(300, 200);
-            // $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
-            // Storage::disk('public')->putFileAs('profiles', $image, $imageName);
-            // $userProfile->profile_image = "profiles/{$imageName}";
 
-        }
+            //$upload = $request->file('profile_image');
+            //$imageName = $user->id . '.' . $upload->getClientOriginalExtension();
+            //$imagePath = 'profiles/' . $imageName;
+            // Store the uploaded profile image
+            //Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
+            //$userProfile->profile_image = $imagePath;
 
+            // Dispatch the job to resize the image
+           // ResizeProfileImage::dispatch($userProfile, $imagePath);
+	   // $userProfile->profile_image = $imagePath;
+
+            // Dispatch the job to resize the image
+//            ResizeProfileImage::dispatch($userProfile, $imagePath);
+}
         $userProfile->intro_text = $request->input('intro_text', null);
         $userProfile->save();
 

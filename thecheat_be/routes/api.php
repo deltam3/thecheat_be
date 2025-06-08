@@ -23,8 +23,10 @@ Route::group([''], function () {
     Route::get('/posts/details/{postId}', [PostController::class, 'getPostDetails'] );
     Route::get('/posts/{communityId}/{searchString}', [PostController::class, 'searchCommunity']);
 });
+    // 피해 사례 검색
+Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
 
-
+//Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
