@@ -44,12 +44,24 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
+            'write' => [
+                 'host' => env('DB_HOST_MASTER', '127.0.0.1'), 
+                 'username' => env('DB_HOST_MASTER_USERNAME', 'laravel'),
+                 'password' => env('DB_HOST_MASTER_PASSWORD', 'secret'),
+                 'database' => env('DB_HOST_MASTER_DATABASE', 'app'),
+             ],
+             'read' => [
+                 'host' => env('DB_HOST_SLAVE', '127.0.0.1'), 
+                 'username' => env('DB_HOST_SLAVE_USERNAME', 'laravel'),
+                 'password' => env('DB_HOST_SLAVE_PASSWORD', 'secret'),
+                 'database' => env('DB_HOST_SLAVE_DATABASE', 'app'), 
+             ],
             'url' => env('DB_URL'),
-            'host' => env('DB_HOST', 'mysql-master'), 
+//            'host' => env('DB_HOST', 'mysql-master'), 
             'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'app'),
-            'username' => env('DB_USERNAME', 'laravel'),
-            'password' => env('DB_PASSWORD', 'secret'),
+//            'database' => env('DB_DATABASE', 'app'),
+//            'username' => env('DB_USERNAME', 'laravel'),
+//            'password' => env('DB_PASSWORD', 'secret'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
@@ -63,18 +75,18 @@ return [
             ]) : [],
 
 
-            // 'write' => [
-            //     'host' => env('DB_HOST', 'mysql-master'), 
+//            'write' => [
+//                 'host' => env('DB_HOST_WRITE', '172.31.240.186'), 
             //     'username' => env('DB_USERNAME', 'laravel'),
             //     'password' => env('DB_PASSWORD', 'secret'),
             //     'database' => env('DB_DATABASE', 'app'),
-            // ],
-            // 'read' => [
-            //     'host' => env('DB_HOST_SECOND', 'mysql-slave'), 
+//             ],
+  //           'read' => [
+ //                'host' => env('DB_HOST_READ', '172.31.240.186'), 
             //     'username' => env('DB_USERNAME_SECOND', 'laravel'),
             //     'password' => env('DB_PASSWORD_SECOND', 'secret'),
             //     'database' => env('DB_DATABASE_SECOND', 'app_slave'),
-            // ],
+ //            ],
         ],
 
 
@@ -109,20 +121,6 @@ return [
                 PDO::ATTR_PERSISTENT => true,
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
-
-
-//            'write' => [
-//                 'host' => env('DB_HOST_WRITE', '172.31.240.186'), 
-            //     'username' => env('DB_USERNAME', 'laravel'),
-            //     'password' => env('DB_PASSWORD', 'secret'),
-            //     'database' => env('DB_DATABASE', 'app'),
-             ],
-  //           'read' => [
- //                'host' => env('DB_HOST_READ', '172.31.240.186'), 
-            //     'username' => env('DB_USERNAME_SECOND', 'laravel'),
-            //     'password' => env('DB_PASSWORD_SECOND', 'secret'),
-            //     'database' => env('DB_DATABASE_SECOND', 'app_slave'),
- //            ],
         ],
 
         'mariadb' => [

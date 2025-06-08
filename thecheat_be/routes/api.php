@@ -27,9 +27,14 @@ Route::group([''], function () {
 
     //피해사례 등록
 });
+
 Route::post('/scamreports', [ScamReportsController::class, 'postScamReport']);
 
+    // 피해 사례 검색
+Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
 
+
+//Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
