@@ -90,38 +90,38 @@ return [
         ],
 
 
-        'mysql' => [
-            'driver' => 'mysql',
-            'write' => [
-                 'host' => env('DB_HOST_WRITE', '172.31.240.186'), 
-                 'username' => env('app_1'),
-                 'password' => env('secret'),
-                 'database' => env('app_1_master'),
-             ],
-             'read' => [
-                 'host' => env('DB_HOST_READ', '172.31.240.186'), 
-                 'username' => env('app_1'),
-                 'password' => env('secret'),
-                 'database' => env('app_1_slave'),
-             ],
-            'url' => env('DB_URL'),
+        // 'mysql' => [
+        //     'driver' => 'mysql',
+        //     'write' => [
+        //          'host' => env('DB_HOST_WRITE', '172.31.240.186'), 
+        //          'username' => env('app_1'),
+        //          'password' => env('secret'),
+        //          'database' => env('app_1_master'),
+        //      ],
+        //      'read' => [
+        //          'host' => env('DB_HOST_READ', '172.31.240.186'), 
+        //          'username' => env('app_1'),
+        //          'password' => env('secret'),
+        //          'database' => env('app_1_slave'),
+        //      ],
+        //     'url' => env('DB_URL'),
 //            'host' => env('DB_HOST', 'mysql-master'), 
-            'port' => env('DB_PORT', '3306'),
+            // 'port' => env('DB_PORT', '3306'),
 //            'database' => env('DB_DATABASE', 'app'),
 //            'username' => env('DB_USERNAME', 'laravel'),
 //            'password' => env('DB_PASSWORD', 'secret'),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => env('DB_CHARSET', 'utf8mb4'),
-            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::ATTR_PERSISTENT => true,
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
+        //     'unix_socket' => env('DB_SOCKET', ''),
+        //     'charset' => env('DB_CHARSET', 'utf8mb4'),
+        //     'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+        //     'prefix' => '',
+        //     'prefix_indexes' => true,
+        //     'strict' => true,
+        //     'engine' => null,
+        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+        //         PDO::ATTR_PERSISTENT => true,
+        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        //     ]) : [],
+        // ],
 
         'mariadb' => [
             'driver' => 'mariadb',
