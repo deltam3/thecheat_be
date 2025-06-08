@@ -140,7 +140,7 @@ class AuthService
                 $userProfile->profile_image = $imagePath;
     
                 
-                // ResizeProfileImage::dispatch($userProfile, $imagePath);
+                ResizeProfileImage::dispatch($userProfile, $imagePath);
             }
     
             $userProfile->intro_text = $request->input('intro_text', null);
