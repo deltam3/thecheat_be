@@ -44,18 +44,18 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            // 'write' => [
-            //      'host' => env('DB_HOST_MASTER', '127.0.0.1'), 
-            //      'username' => env('DB_HOST_MASTER_USERNAME', 'laravel'),
-            //      'password' => env('DB_HOST_MASTER_PASSWORD', 'secret'),
-            //      'database' => env('DB_HOST_MASTER_DATABASE', 'app'),
-            //  ],
-            //  'read' => [
-            //      'host' => env('DB_HOST_SLAVE', '127.0.0.1'), 
-            //      'username' => env('DB_HOST_SLAVE_USERNAME', 'laravel'),
-            //      'password' => env('DB_HOST_SLAVE_PASSWORD', 'secret'),
-            //      'database' => env('DB_HOST_SLAVE_DATABASE', 'app'), 
-            //  ],
+            'write' => [
+                 'host' => env('DB_HOST_MASTER', '127.0.0.1'), 
+                 'username' => env('DB_HOST_MASTER_USERNAME', 'laravel'),
+                 'password' => env('DB_HOST_MASTER_PASSWORD', 'secret'),
+                 'database' => env('DB_HOST_MASTER_DATABASE', 'app'),
+             ],
+             'read' => [
+                 'host' => env('DB_HOST_SLAVE', '127.0.0.1'), 
+                 'username' => env('DB_HOST_SLAVE_USERNAME', 'laravel'),
+                 'password' => env('DB_HOST_SLAVE_PASSWORD', 'secret'),
+                 'database' => env('DB_HOST_SLAVE_DATABASE', 'app'), 
+             ],
             'url' => env('DB_URL'),
            'host' => env('DB_HOST', 'mysql-master'), 
             'port' => env('DB_PORT', '3306'),
