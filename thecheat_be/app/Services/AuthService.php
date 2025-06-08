@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Jobs\ResizeProfileImage;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 
 use Intervention\Image\Laravel\Facades\Image;
-
+use App\Jobs\ResizeProfileImage;
 
 class AuthService
 {
@@ -86,16 +86,16 @@ class AuthService
             $userProfile = UserProfile::firstOrCreate(['user_id' => $user->id]);
 
             if ($request->hasFile('profile_image')) {
-                $upload = $request->file('profile_image');
-                $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
-                Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
-                $userProfile->profile_image = "profiles/{$imageName}";
-
-                // $uploadedImage = $request->file('profile_image');
-                // $image = Image::read($uploadedImage)->resize(300, 200);
-                // $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
-                // Storage::disk('public')->putFileAs('profiles', $image, $imageName);
+                // $upload = $request->file('profile_image');
+                // $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
+                // Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
                 // $userProfile->profile_image = "profiles/{$imageName}";
+
+                $uploadedImage = $request->file('profile_image');
+                $image = Image::read($uploadedImage)->resize(300, 200);
+                $imageName = $user->id . '.' . $uploadedImage->getClientOriginalExtension();
+                Storage::disk('public')->putFileAs('profiles', $image, $imageName);
+                $userProfile->profile_image = "profiles/{$imageName}";
 
             }
 
@@ -110,6 +110,47 @@ class AuthService
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    // public function emailRegistrationOptional(Request $request)
+    // {
+    //     try {
+    //         $request->validate([
+    //             'intro_text' => 'nullable|string|max:100',
+    //             'profile_image' => 'nullable|image|max:5120',
+    //         ]);
+    
+    //         $user = auth()->user();
+    
+    //         if (!$user) {
+    //             return response()->json(['error' => 'User not authenticated'], 401);
+    //         }
+    
+    //         $userProfile = UserProfile::firstOrCreate(['user_id' => $user->id]);
+    
+    //         if ($request->hasFile('profile_image')) {
+    //             $upload = $request->file('profile_image');
+    //             $imageName = $user->id . '.' . $upload->getClientOriginalExtension();
+    //             $imagePath = 'profiles/' . $imageName;
+    
+    //             
+    //             Storage::disk('public')->putFileAs('profiles', $upload, $imageName);
+    //             $userProfile->profile_image = $imagePath;
+    
+    //             
+    //             ResizeProfileImage::dispatch($userProfile, $imagePath);
+    //         }
+    
+    //         $userProfile->intro_text = $request->input('intro_text', null);
+    //         $userProfile->save();
+    
+    //         return response()->json([
+    //             'message' => 'Profile updated successfully',
+    //             'user_profile' => $userProfile,
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
   public function emailLogin(Request $request)
   {
       try {

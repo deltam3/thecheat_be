@@ -29,6 +29,7 @@ Route::group([''], function () {
 });
 Route::post('/scamreports', [ScamReportsController::class, 'postScamReport']);
 
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
