@@ -13,29 +13,29 @@ Route::get('/', function (Request $request) {
     return '혼자서';
 });
 
-Route::post('/auth/emailRegistration', [AuthController::class, 'emailRegistration']);
-Route::post('/auth/emailLogin', [AuthController::class, 'emailLogin'])->name('login');
-
-
-Route::group([''], function () {
+Route::middleware('throttle:15,1')->group(function () {
+    Route::post('/auth/emailRegistration', [AuthController::class, 'emailRegistration']);
+    Route::post('/auth/emailLogin', [AuthController::class, 'emailLogin'])->name('login');
+    
     // 새글피드
     Route::get('/posts', [PostController::class, 'index']);
     // 게시판마다 글들 가져오기
     Route::get('/posts/{communityId}', [PostController::class, 'getPostsByCommunityId']);
     Route::get('/posts/details/{postId}', [PostController::class, 'getPostDetails'] );
     Route::get('/posts/{communityId}/{searchString}', [PostController::class, 'searchCommunity']);
-
+    
     //피해사례 등록
-});
+    Route::post('/scamreports', [ScamReportsController::class, 'postScamReport']);
 
-Route::post('/scamreports', [ScamReportsController::class, 'postScamReport']);
 
     // 피해 사례 검색
-Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
+    Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
+
+});
 
 
-//Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
-Route::middleware('auth:sanctum')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::delete('/user/unregister', [UserController::class, 'unregister']);
@@ -56,9 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
-
-    // 피해 사례 검색
-Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
 
 
 use App\Jobs\DummyJob;

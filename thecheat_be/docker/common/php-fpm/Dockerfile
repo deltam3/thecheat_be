@@ -1,7 +1,4 @@
-# Stage 1: Build environment and Composer dependencies
 FROM php:8.4-fpm AS builder
-
-# Install system dependencies and PHP extensions required for Laravel + MySQL/PostgreSQL support
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -26,35 +23,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && docker-php-ext-enable redis \
     && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# RUN apt-get update && apt-get install -y \
-#     libpng-dev \
-#     libjpeg-dev \
-#     libfreetype6-dev \
-#     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-#     && docker-php-ext-install gd \
-#     && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-
-RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libjpeg62-turbo-dev \
-        libpng-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd
-
 
 WORKDIR /var/www
 
 COPY . /var/www
 
-
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
-
-
 FROM php:8.4-fpm AS production
-
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq-dev \
@@ -76,7 +53,6 @@ COPY ./storage /var/www/storage-init
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
-
 
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 

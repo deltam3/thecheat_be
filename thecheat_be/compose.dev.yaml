@@ -158,7 +158,7 @@ services:
     networks:
       - laravel-development
     depends_on:
-      mysql-master:
+      mysql:
         condition: service_started
 
   workspace:
@@ -183,19 +183,19 @@ services:
     networks:
       - laravel-development
 
-  # mysql:
-  #   image: mysql:8
-  #   ports:
-  #     - "3306:3306"
-  #   environment:
-  #     - MYSQL_DATABASE=app
-  #     - MYSQL_USER=laravel
-  #     - MYSQL_PASSWORD=secret
-  #     - MYSQL_ROOT_PASSWORD=secret
-  #   volumes:
-  #     - mysql-data-development:/var/lib/mysql
-  #   networks:
-  #     - laravel-development
+  mysql:
+    image: mysql:8
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=app
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=secret
+    volumes:
+      - mysql-data-development:/var/lib/mysql
+    networks:
+      - laravel-development
   mysql-master:
     image: mysql:latest
     command: --server-id=1 --log-bin=mysql-bin --binlog-format=row
@@ -237,5 +237,6 @@ networks:
   laravel-development:
 
 volumes:
-  mysql-data-master:
-  mysql-data-slave:
+  mysql-data-development:
+  # mysql-data-master:
+  # mysql-data-slave:

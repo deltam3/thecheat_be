@@ -14,7 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->command('apps:sync-cache-to-database')->everyMinute();
