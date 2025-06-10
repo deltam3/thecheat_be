@@ -31,8 +31,7 @@ Route::prefix('v1')->middleware('throttle:15,1')->group(function () {
     Route::post('/scamreports', [ScamReportsController::class, 'postScamReport']);
 
 
-    // 피해 사례 검색
-    Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
+
 
 });
 
@@ -58,7 +57,8 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:15,1'])->group(functi
     Route::get('/user/profile', [UserController::class, 'getUserProfile']);
     Route::post('/user/logout', [UserController::class, 'logoutUser']);
 
-
+    // 피해 사례 검색
+    Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
 });
 
 
