@@ -238,5 +238,5 @@ networks:
 
 volumes:
   mysql-data-development:
-  # mysql-data-master:
-  # mysql-data-slave:
+  mysql-data-master:
+  mysql-data-slave:

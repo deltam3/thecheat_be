@@ -9,11 +9,14 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ScamReportsController;
 
 
-Route::get('/', function (Request $request) {
-    return '혼자서';
+Route::prefix('v1')->group(function () {
+    Route::get('/', function (Request $request) {
+        return response()->json(['message' => 'API v1 test endpoint']);
+    });
 });
 
-Route::middleware('throttle:15,1')->group(function () {
+// Route::middleware('throttle:15,1')->group(function () {
+Route::prefix('v1')->middleware('throttle:15,1')->group(function () {
     Route::post('/auth/emailRegistration', [AuthController::class, 'emailRegistration']);
     Route::post('/auth/emailLogin', [AuthController::class, 'emailLogin'])->name('login');
     
@@ -35,7 +38,8 @@ Route::middleware('throttle:15,1')->group(function () {
 
 
 // Route::middleware('auth:sanctum')->group(function () {
-Route::middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
+// Route::middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
+Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::delete('/user/unregister', [UserController::class, 'unregister']);
