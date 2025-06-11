@@ -31,6 +31,12 @@ class AuthController extends Controller
         return $message;
     }
 
+    public function getProfile(Request $request)
+    {
+        $message = $this->authService->getProfile($request);
+        return $message;
+    }
+
     public function logout(Request $request) 
     {
         $message = $this->authService->logout($request);

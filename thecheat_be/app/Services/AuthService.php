@@ -147,7 +147,7 @@ class AuthService
             $userProfile->save();
     
             return response()->json([
-                'message' => 'Profile updated successfully',
+                'message' => '선택 프로필 정보 올리기 성공!',
                 'user_profile' => $userProfile,
             ], 200);
         } catch (\Exception $e) {
@@ -196,6 +196,17 @@ class AuthService
       }
   }
   
+  public function getProfile(Request $request)
+  {
+    $user = $request->user()->load('profile'); 
+
+    return response()->json([
+        'username' => $user->username,
+        'profile_image' => $user->profile->profile_image ?? null,
+        'intro_text' => $user->profile->intro_text ?? null,
+    ]);
+  }
+
   public function logout(Request $request)
   {
     $request->user()->currentAccessToken()->delete();

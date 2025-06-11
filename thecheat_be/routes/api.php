@@ -38,7 +38,8 @@ Route::prefix('v1')->middleware('throttle:15,1')->group(function () {
 
 // Route::middleware('auth:sanctum')->group(function () {
 // Route::middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
-Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
+// Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:15,1'])->group(function () {
+Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     Route::post('/auth/emailRegistration/optional', [AuthController::class, 'emailRegistrationOptional']);
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::delete('/user/unregister', [UserController::class, 'unregister']);
@@ -59,6 +60,9 @@ Route::prefix('v1')->middleware(['auth:sanctum', 'throttle:15,1'])->group(functi
 
     // 피해 사례 검색
     Route::get('/scamreports/', [ScamReportsController::class, 'searchScamReports']);
+
+    // 자신의 프로필 사진, 유저네임, 인사말 가져오는 프로필 페이지
+    Route::get('auth/profile', [AuthController::class, 'getProfile']);
 });
 
 
